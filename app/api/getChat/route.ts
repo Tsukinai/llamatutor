@@ -1,8 +1,8 @@
 // 导入AI流处理相关模块
 import {
-  TogetherAIStream,
-  TogetherAIStreamPayload,
-} from "@/utils/TogetherAIStream";
+  OpenAIStream,
+  OpenAIStreamPayload,
+} from "@/utils/OpenAIStream";
 // 导入速率限制相关模块
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
@@ -50,15 +50,17 @@ export async function POST(request: Request) {
   }
 
   try {
-    // 构建发送给Together AI的请求负载
-    const payload: TogetherAIStreamPayload = {
-      model: "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo", // 使用Llama 3.1 8B模型
+    // 构建发送给OpenAI的请求负载
+    const payload: OpenAIStreamPayload = {
+      model: "gpt-3.5-turbo", // 使用GPT-3.5-turbo模型
       messages, // 包含系统提示和用户消息的对话历史
       stream: true, // 启用流式响应，实现实时输出
+      temperature: 0.7, // 控制回复的创造性
+      max_tokens: 2000, // 限制最大回复长度
     };
 
-    // 调用Together AI API并获取流式响应
-    const stream = await TogetherAIStream(payload);
+    // 调用OpenAI API并获取流式响应
+    const stream = await OpenAIStream(payload);
 
     // 返回流式响应给前端，设置不缓存头部
     return new Response(stream, {
@@ -67,8 +69,8 @@ export async function POST(request: Request) {
       }),
     });
   } catch (e) {
-    // 如果AI服务出错，返回202状态码和错误信息
-    return new Response("Error. Answer stream failed.", { status: 202 });
+    // 如果OpenAI服务出错，返回202状态码和错误信息
+    return new Response("Error. OpenAI stream failed.", { status: 202 });
   }
 }
 
