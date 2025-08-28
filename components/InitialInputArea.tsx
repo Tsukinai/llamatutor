@@ -1,17 +1,26 @@
+// 导入React类型和键盘事件类型
 import { FC, KeyboardEvent } from "react";
+// 导入打字动画组件
 import TypeAnimation from "./TypeAnimation";
+// 导入Next.js图片组件
 import Image from "next/image";
 
+// 初始输入区域组件的Props类型定义
 type TInputAreaProps = {
-  promptValue: string;
-  setPromptValue: React.Dispatch<React.SetStateAction<string>>;
-  disabled?: boolean;
-  handleChat: (messages?: { role: string; content: string }[]) => void;
-  ageGroup: string;
-  setAgeGroup: React.Dispatch<React.SetStateAction<string>>;
-  handleInitialChat: () => void;
+  promptValue: string; // 当前输入框的值
+  setPromptValue: React.Dispatch<React.SetStateAction<string>>; // 设置输入框值的函数
+  disabled?: boolean; // 是否禁用输入（可选）
+  handleChat: (messages?: { role: string; content: string }[]) => void; // 处理聊天的函数
+  ageGroup: string; // 当前选择的教育水平
+  setAgeGroup: React.Dispatch<React.SetStateAction<string>>; // 设置教育水平的函数
+  handleInitialChat: () => void; // 处理初始聊天的函数
 };
 
+/**
+ * InitialInputArea组件 - 首次输入区域组件
+ * 提供学习主题输入框、教育水平选择器和搜索按钮
+ * 支持键盘快捷键（Enter提交，Shift+Enter换行）
+ */
 const InitialInputArea: FC<TInputAreaProps> = ({
   promptValue,
   setPromptValue,
@@ -20,13 +29,20 @@ const InitialInputArea: FC<TInputAreaProps> = ({
   ageGroup,
   setAgeGroup,
 }) => {
+  /**
+   * 处理键盘事件的函数
+   * Enter键：提交表单开始学习
+   * Shift+Enter：允许换行输入
+   * 
+   * @param e - 键盘事件对象
+   */
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
       if (e.shiftKey) {
-        return;
+        return; // Shift+Enter：允许换行
       } else {
-        e.preventDefault();
-        handleInitialChat();
+        e.preventDefault(); // 阻止默认换行行为
+        handleInitialChat(); // 提交表单
       }
     }
   };

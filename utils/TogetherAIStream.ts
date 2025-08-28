@@ -1,22 +1,27 @@
+// 导入事件源解析器相关类型和函数
 import {
   createParser,
   ParsedEvent,
   ReconnectInterval,
 } from "eventsource-parser";
 
+// 聊天角色类型定义：用户或系统
 export type ChatGPTAgent = "user" | "system";
 
+// 聊天消息接口定义
 export interface ChatGPTMessage {
-  role: ChatGPTAgent;
-  content: string;
+  role: ChatGPTAgent; // 消息发送者角色
+  content: string; // 消息内容
 }
 
+// Together AI流式请求负载接口定义
 export interface TogetherAIStreamPayload {
-  model: string;
-  messages: ChatGPTMessage[];
-  stream: boolean;
+  model: string; // 使用的AI模型名称
+  messages: ChatGPTMessage[]; // 对话消息历史数组
+  stream: boolean; // 是否启用流式响应
 }
 
+// 注释：原始Together客户端配置（已改为直接fetch调用）
 // const together = new Together({
 //   apiKey: process.env["TOGETHER_API_KEY"],
 //   baseURL: "https://together.helicone.ai/v1",
@@ -25,6 +30,14 @@ export interface TogetherAIStreamPayload {
 //   },
 // });
 
+/**
+ * Together AI流式响应处理函数
+ * 调用Together AI API并将响应转换为可读流
+ * 通过Helicone代理进行请求监控和分析
+ * 
+ * @param payload - Together AI API请求负载
+ * @returns ReadableStream - 可读流，用于流式输出AI回复
+ */
 export async function TogetherAIStream(payload: TogetherAIStreamPayload) {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
